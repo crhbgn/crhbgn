@@ -1,15 +1,35 @@
 #!/bin/sh
 
 
+
+checkyesno()
+{
+
+  value=$yesno
+  case $value in
+
+  #     "yes", "true", "on", or "1"
+  [Yy][Ee][Ss]|[Tt][Rr][Uu][Ee]|[Oo][Nn]|1)
+  return 0
+  ;;
+
+  #     "no", "false", "off", or "0"
+  [Nn][Oo]|[Ff][Aa][Ll][Ss][Ee]|[Oo][Ff][Ff]|0)
+  return 1
+  ;;
+
+  *)
+  return 2
+  ;;
+esac
+}
+
 start() {
   echo -n "The script destroys all data on hard disk. Are you sure you want to start? (Yes/No):"
   read yesno
-  regex = "^([yY][eE][sS]|[yY])$"
-  if [ $yesno =~ regex ]
+  if [ checkyesno -eq 1 ];
   then
-    echo "Installation starting"
-  else
-    echo "Instalation aborted"
+    exit
   fi
 }
 
