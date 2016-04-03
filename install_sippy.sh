@@ -123,7 +123,7 @@ createParts() {
 
 createZFSparts() {
   `zpool create -f zroot /dev/gpt/disk0`
-  `zpool set bootfs=zroot zroot`
+  `zpool set bootfs="zroot/root" zroot`
 
    `zfs create -o mountpoint=/tmp/zroot/tmp zroot/tmp`
 }
