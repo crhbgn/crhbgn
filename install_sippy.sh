@@ -27,7 +27,9 @@ esac
 start() {
   echo -n "The script destroys all data on hard disk. Are you sure you want to start? (Yes/No):"
   read yesno
-  if [ checkyesno -eq 1 ];
+  rc=checkyesno
+  echo $rc
+  if [ $rc -eq 1 ];
   then
     exit
   fi
