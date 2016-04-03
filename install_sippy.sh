@@ -4,7 +4,8 @@
 start() {
   echo -n "The script destroys all data on hard disk. Are you sure you want to start? (Yes/No):"
   read yesno
-  if [ $yesno =~ ^([yY][eE][sS]|[yY])$ ]
+  regex = "^([yY][eE][sS]|[yY])$"
+  if [ $yesno =~ regex ]
   then
     echo "Installation starting"
   else
