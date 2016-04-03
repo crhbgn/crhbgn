@@ -5,34 +5,27 @@
 checkyesno()
 {
 
-  value=$yesno
-  case $value in
 
-  #     "yes", "true", "on", or "1"
-  [Yy][Ee][Ss]|[Tt][Rr][Uu][Ee]|[Oo][Nn]|1)
-  return 0
-  ;;
-
-  #     "no", "false", "off", or "0"
-  [Nn][Oo]|[Ff][Aa][Ll][Ss][Ee]|[Oo][Ff][Ff]|0)
-  return 1
-  ;;
-
-  *)
-  return 2
-  ;;
-esac
 }
 
 start() {
   echo -n "The script destroys all data on hard disk. Are you sure you want to start? (Yes/No):"
   read yesno
-  rc=checkyesno
-  echo $rc
-  if [ $rc -eq 1 ];
-  then
-    exit
-  fi
+  case $yesno in
+    #     "yes", "true", "on", or "1"
+    [Yy][Ee][Ss])
+      return 0
+    ;;
+
+    #     "no", "false", "off", or "0"
+    [Nn][Oo])
+      echo "exiting"
+      exit
+    ;;
+    *)
+      return 2
+    ;;
+  esac
 }
 
 getIface() {
