@@ -115,11 +115,11 @@ createParts() {
     echo "Error. Something wrong:"
   fi
 
-  rc=`gpart add -s 4G -t freebsd-swap -l swap0 /dev/$disk`
-  if [ $? -ne "0" ]
-  then
-    echo "Error. Something wrong:"
-  fi
+  #rc=`gpart add -s 4G -t freebsd-swap -l swap0 /dev/$disk`
+  #if [ $? -ne "0" ]
+  #then
+  #  echo "Error. Something wrong:"
+  #fi
 
   rc=`gpart add -t freebsd-zfs -l disk0 /dev/$disk`
   if [ $? -ne "0" ]
@@ -150,20 +150,26 @@ downloadImages() {
 };
 
 importFs() {
-
+  echo "Restoring /root partition"
   gunzip -c -d /tmp/zroot/tmp/root.gz | zfs receive zroot/root
   rm /tmp/zroot/tmp/root.gz
+  echo "Restoring /storage partition"
   gunzip -c -d /tmp/zroot/tmp/storage.gz | zfs receive zroot/storage
   rm /tmp/zroot/tmp/storage.gz
+  echo "Restoring /usr partition"
   gunzip -c -d /tmp/zroot/tmp/usr.gz | zfs receive zroot/usr
   rm /tmp/zroot/tmp/usr.gz
+  echo "Restoring /usr/home partition"
   gunzip -c -d /tmp/zroot/tmp/usr-home.gz | zfs receive zroot/usr/home
   rm /tmp/zroot/tmp/usr-home.gz
 
+  echo "Restoring /var partition"
   gunzip -c -d /tmp/zroot/tmp/var.gz | zfs receive zroot/var
   rm /tmp/zroot/tmp/var.gz
+  echo "Restoring /var/log partition"
   gunzip -c -d /tmp/zroot/tmp/var-log.gz | zfs receive zroot/var/log
   rm /tmp/zroot/tmp/var-log.gz
+  echo "Restoring /var/tmp partition"
   gunzip -c -d /tmp/zroot/tmp/var-tmp.gz | zfs receive zroot/var/tmp
   rm /tmp/zroot/tmp/var-tmp.gz
 
