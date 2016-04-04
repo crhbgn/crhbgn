@@ -52,7 +52,7 @@ getIface() {
 }
 
 getIp() {
-  ifaceIp=`ifconfig | grep inet | grep broad | awk '{print $2}'`
+  ifaceIp=`ifconfig $iFace| grep inet | grep broad | awk '{print $2}'`
   gwIp=`route -n get default | grep gateway | awk '{print $2}'`
 }
 
@@ -115,11 +115,11 @@ createParts() {
     echo "Error. Something wrong:"
   fi
 
-  #rc=`gpart add -s 4G -t freebsd-swap -l swap0 /dev/$disk`
-  #if [ $? -ne "0" ]
-  #then
-  #  echo "Error. Something wrong:"
-  #fi
+  rc=`gpart add -s 4G -t freebsd-swap -l swap0 /dev/$disk`
+  if [ $? -ne "0" ]
+  then
+    echo "Error. Something wrong:"
+  fi
 
   rc=`gpart add -t freebsd-zfs -l disk0 /dev/$disk`
   if [ $? -ne "0" ]
@@ -139,7 +139,7 @@ createParts() {
 
 createZFSparts() {
   `zpool create -R /tmp/zroot -f zroot /dev/gpt/disk0`
-  `zfs create -V 4G -o org.freebsd:swap=on -o checksum=off -o compression=off -o dedup=off -o sync=disabled -o primarycache=none zroot/swap`
+  #`zfs create -V 4G -o org.freebsd:swap=on -o checksum=off -o compression=off -o dedup=off -o sync=disabled -o primarycache=none zroot/swap`
   `zfs create -o mountpoint=/tmp zroot/tmp`
 }
 
