@@ -14,12 +14,12 @@ start() {
   case $yesno in
     #     "yes", "true", "on", or "1"
     [Yy][Ee][Ss])
-      return 0
+      Echo "Start installation"
     ;;
 
     #     "no", "false", "off", or "0"
     [Nn][Oo])
-      echo "exiting"
+      echo "Installation abort"
       exit
     ;;
     *)
@@ -138,15 +138,13 @@ createParts() {
 
 
 createZFSparts() {
-  `zpool create -f zroot /dev/gpt/disk0`
-  `zpool set bootfs="zroot/root" zroot`
-
-   `zfs create -o mountpoint=/tmp/zroot/tmp zroot/tmp`
+  `zpool create -R /tmp/zroot -f zroot /dev/gpt/disk0`
+   `zfs create -o mountpoint=/tmp zroot/tmp`
 }
 
 downloadImages() {
 
-  #`scp besco@10.101.0.16:./mnt/zfs-images/\*.gz /tmp/zroot/tmp`
+  `scp besco@10.101.0.16:./mnt/zfs-images/new/\*.gz /tmp/zroot/tmp`
 
 };
 
@@ -160,7 +158,8 @@ importFs() {
   gunzip -c -d /tmp/zroot/tmp/var.gz | zfs receive zroot/var
   gunzip -c -d /tmp/zroot/tmp/var-log.gz | zfs receive zroot/var/log
   gunzip -c -d /tmp/zroot/tmp/var-tmp.gz | zfs receive zroot/var/tmp
-  zfs set mountpoint=/tmp/zroot zroot
+  zpool set bootfs="zroot/root" zroot
+  zfs set mountpoint=/ zroot
   zfs mount zroot/root
 }
 
@@ -180,17 +179,17 @@ modConfig() {
 finish() {
   zfs umount -a
   zfs set mountpoint=/ zroot
-  zfs set mountpoint=/ zroot/root
+  # zfs set mountpoint=/ zroot/root
 }
 
 start
 
 setIp
 getDisk
-#destroyDisk
-#createParts
-#createZFSparts
-#downloadImages
-#importFs
-#modConfig
-#finish
+destroyDisk
+createParts
+createZFSparts
+downloadImages
+importFs
+modConfig
+finish
