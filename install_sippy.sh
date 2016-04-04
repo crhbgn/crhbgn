@@ -139,25 +139,34 @@ createParts() {
 
 createZFSparts() {
   `zpool create -R /tmp/zroot -f zroot /dev/gpt/disk0`
-   `zfs create -o mountpoint=/tmp zroot/tmp`
+  `zfs create -V 4G -o org.freebsd:swap=on -o checksum=off -o compression=off -o dedup=off -o sync=disabled -o primarycache=none zroot/swap`
+  `zfs create -o mountpoint=/tmp zroot/tmp`
 }
 
 downloadImages() {
 
-  `scp besco@10.101.0.16:./mnt/zfs-images/new/\*.gz /tmp/zroot/tmp`
+  scp besco@10.101.0.16:./mnt/zfs-images/new/\*.gz /tmp/zroot/tmp
 
 };
 
 importFs() {
 
   gunzip -c -d /tmp/zroot/tmp/root.gz | zfs receive zroot/root
+  rm /tmp/zroot/tmp/root.gz
   gunzip -c -d /tmp/zroot/tmp/storage.gz | zfs receive zroot/storage
+  rm /tmp/zroot/tmp/storage.gz
   gunzip -c -d /tmp/zroot/tmp/usr.gz | zfs receive zroot/usr
+  rm /tmp/zroot/tmp/usr.gz
   gunzip -c -d /tmp/zroot/tmp/usr-home.gz | zfs receive zroot/usr/home
+  rm /tmp/zroot/tmp/usr-home.gz
 
   gunzip -c -d /tmp/zroot/tmp/var.gz | zfs receive zroot/var
+  rm /tmp/zroot/tmp/var.gz
   gunzip -c -d /tmp/zroot/tmp/var-log.gz | zfs receive zroot/var/log
+  rm /tmp/zroot/tmp/var-log.gz
   gunzip -c -d /tmp/zroot/tmp/var-tmp.gz | zfs receive zroot/var/tmp
+  rm /tmp/zroot/tmp/var-tmp.gz
+
   zpool set bootfs="zroot/root" zroot
   zfs set mountpoint=/ zroot
   zfs mount zroot/root
@@ -173,12 +182,11 @@ modConfig() {
   echo "" >>/tmp/rc.conf
   cp /tmp/zroot/root/etc/rc.conf /tmp/zroot/root/etc/rc.conf-bk
   cp /tmp/rc.conf /tmp/zroot/root/etc/rc.conf
-
 }
 
 finish() {
   zfs umount -a
-  zfs set mountpoint=/ zroot
+  # zfs set mountpoint=/ zroot
   # zfs set mountpoint=/ zroot/root
 }
 
