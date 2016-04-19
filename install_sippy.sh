@@ -185,7 +185,9 @@ modConfig() {
 
   cat /tmp/zroot/root/etc/rc.conf | sed 's/^ifconfig/#ifconfig/g' >/tmp/rc.conf
   echo "ifconfig_$iFace=\"inet $ipaddr netmask $netmask\"" >>/tmp/rc.conf
+  echo "defaultrouter=\"$gwaddr\"" >>/tmp/rc.conf
   echo "" >>/tmp/rc.conf
+  # mv sip-46.166.172.5.sh | sed 's/46.166.172.5/10.99.0.2/g'
   cp /tmp/zroot/root/etc/rc.conf /tmp/zroot/root/etc/rc.conf-bk
   cp /tmp/rc.conf /tmp/zroot/root/etc/rc.conf
 }
@@ -207,3 +209,7 @@ downloadImages
 importFs
 modConfig
 finish
+
+
+
+# UPDATE environments SET assigned_ips = '10.99.0.2' WHERE i_environment = 1;
