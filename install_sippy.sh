@@ -207,7 +207,7 @@ finish() {
 
 #start
 
-#setIp
+setIp
 #getDisk
 #destroyDisk
 #createParts
