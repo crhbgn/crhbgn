@@ -192,24 +192,31 @@ modConfig() {
   cp /tmp/rc.conf /tmp/zroot/root/etc/rc.conf
 }
 
+modConfig_p() {
+  cat /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh | sed 's/46.166.172.5/$ipaddr/g' >/tmp/zroot/usr/local/etc/rc.d/sip-$ipaddr.sh
+  cat /tmp/zroot/root/etc/hosts | sed 's/46.166.172.5/$ipaddr/g' >/tmp/zroot/root/etc/hosts.new
+
+  # rm /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh
+}
+
 finish() {
   zfs umount -a
   # zfs set mountpoint=/ zroot
   # zfs set mountpoint=/ zroot/root
 }
 
-start
+#start
 
-setIp
-getDisk
-destroyDisk
-createParts
-createZFSparts
-downloadImages
-importFs
-modConfig
-finish
-
+#setIp
+#getDisk
+#destroyDisk
+#createParts
+#createZFSparts
+#downloadImages
+#importFs
+#modConfig
+#finish
+modConfig_p
 
 
 # UPDATE environments SET assigned_ips = '10.99.0.2' WHERE i_environment = 1;
