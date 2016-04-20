@@ -59,7 +59,7 @@ getIp() {
 setIp() {
   getIp
   getIface
-  echo -n "Enter IP addres ($ifaceIp, right? Press enter) > "
+  echo -n "Enter IP address ($ifaceIp, right? Press enter) > "
   read ipaddr
   if [ -z $ipaddr ]
   then
@@ -73,7 +73,7 @@ setIp() {
     netmask="255.255.255.0"
   fi
 
-  echo -n "Enter GATEWAY addres ($gwIp, right? Press enter) > "
+  echo -n "Enter GATEWAY address ($gwIp, right? Press enter) > "
   read gwaddr
   if [ -z $gwaddr ]
   then
@@ -192,13 +192,10 @@ modConfig() {
   # mv sip-46.166.172.5.sh | sed 's/46.166.172.5/10.99.0.2/g'
   cp /tmp/zroot/root/etc/rc.conf /tmp/zroot/root/etc/rc.conf-bk
   cp /tmp/rc.conf /tmp/zroot/root/etc/rc.conf
-}
-
-modConfig_p() {
   cat /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/usr/local/etc/rc.d/sip-$ipaddr.sh
   cat /tmp/zroot/root/etc/hosts | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/root/etc/hosts.new
-
-  # rm /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh
+  echo "host  all  all  $ipaddr/32  trust" >>/tmp/zroot/var/db/pgsql/data/pg_hba.conf
+  chmod 777 /tmp/zroot/tmp
 }
 
 finish() {
