@@ -207,14 +207,14 @@ finish() {
 #start
 
 setIp
-#getDisk
-#destroyDisk
-#createParts
-#createZFSparts
-#downloadImages
-#importFs
-#modConfig
+getDisk
+destroyDisk
+createParts
+createZFSparts
+downloadImages
+importFs
+modConfig
 modConfig_p
-#finish
+finish
 
 # UPDATE environments SET assigned_ips = '10.99.0.2' WHERE i_environment = 1;
