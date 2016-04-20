@@ -66,6 +66,13 @@ setIp() {
     ipaddr=$ifaceIp
   fi
 
+  echo -n "Enter netmask (255.255.255.0, right? Press enter) > "
+  read netmask
+  if [ -z $netmask ]
+  then
+    netmask="255.255.255.0"
+  fi
+
   echo -n "Enter GATEWAY addres ($gwIp, right? Press enter) > "
   read gwaddr
   if [ -z $gwaddr ]
@@ -73,12 +80,6 @@ setIp() {
     gwaddr=$gwIp
   fi
 
-  echo -n "Enter netmask (255.255.255.0, right? Press enter) > "
-  read netmask
-  if [ -z $netmask ]
-  then
-    netmask="255.255.255.0"
-  fi
   echo ""
   echo "Current settings:"
   echo "IP addr  : $ipaddr"
@@ -196,6 +197,7 @@ modConfig() {
 modConfig_p() {
   cat /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/usr/local/etc/rc.d/sip-$ipaddr.sh
   cat /tmp/zroot/root/etc/hosts | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/root/etc/hosts.new
+
   # rm /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh
 }
 
