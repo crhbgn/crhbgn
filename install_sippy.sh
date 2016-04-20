@@ -145,7 +145,8 @@ createZFSparts() {
 
 downloadImages() {
 
-  scp besco@10.101.0.16:./mnt/zfs-images/new/\*.gz /tmp/zroot/tmp
+  # scp besco@10.101.0.16:./mnt/zfs-images/new/\*.gz /tmp/zroot/tmp
+  scp besco@10.101.0.16:./mnt/zfs-images/\*.gz /tmp/zroot/tmp
 
 };
 
@@ -195,7 +196,6 @@ modConfig() {
 modConfig_p() {
   cat /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh | sed 's/46.166.172.5/$ipaddr/g' >/tmp/zroot/usr/local/etc/rc.d/sip-$ipaddr.sh
   cat /tmp/zroot/root/etc/hosts | sed 's/46.166.172.5/$ipaddr/g' >/tmp/zroot/root/etc/hosts.new
-
   # rm /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh
 }
 
