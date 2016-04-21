@@ -1,28 +1,22 @@
 #!/bin/sh
 
-
-
-checkyesno()
-{
-
-
-}
+DIALOG=${DIALOG=dialog}
+tempfile=`mktemp 2>/dev/null` || tempfile=/tmp/test$$
 
 start() {
-  echo -n "The script destroys all data on hard disk. Are you sure you want to start? (Yes/No):"
-  read yesno
-  case $yesno in
-    #     "yes", "true", "on", or "1"
-    [Yy][Ee][Ss])
-      Echo "Start installation"
+  #echo -n "The script destroys all data on hard disk. Are you sure you want to start? (Yes/No):"
+  #read yesno
+  $DIALOG --defaultno --yesno "The script destroys all data on hard disk. \n\nAre you sure you want to start?" 8 50
+  case $? in
+    0)
+      echo "Start installation"
     ;;
 
-    #     "no", "false", "off", or "0"
-    [Nn][Oo])
+    1)
       echo "Installation abort"
-      exit
+      return 1
     ;;
-    *)
+    255)
       return 2
     ;;
   esac
@@ -30,65 +24,85 @@ start() {
 
 getIface() {
   p=1
-
+  trap "rm -f $tempfile" 0 1 2 5 15
   for i in `ifconfig | grep flag | grep -v lo0 | awk '{print \$1}' | sed 's/://g' | xargs`; do
     eval val$p=$i
-    echo $p - $val$i
+    network="$network $i <--- off"
     p=`expr $p + 1`
   done
-  echo -n "Select network card (1-`expr $p - 1`)> "
-  read numFace
-  if [ -z $numFace ]; then
-    iFace=$val1
-  fi
-  p=1
-  for i in `ifconfig | grep flag | grep -v lo0 | awk '{print \$1}' | sed 's/://g' | xargs`; do
-    if [ $p -eq $numFace ]
-    then
-      iFace=$i
-    fi
-    p=`expr $p + 1`
-  done
+  $DIALOG --no-cancel --title "Network configuration" --clear --radiolist "Select network card" 0 50 10 $network 2>$tempfile
+  retval=$?
+  choice=`cat $tempfile`
+  case $retval in
+  0)
+    iFace=$choice ;;
+  1)
+    echo "Abort installation";;
+  255)
+    echo "Abort installation";;
+  esac
+
+  echo $iFace
 }
 
 getIp() {
-  ifaceIp=`ifconfig $iFace| grep inet | grep broad | awk '{print $2}'`
+  ifaceIp=`ifconfig $iFace| grep -m1 inet | grep broad | awk '{print $2}'`
   gwIp=`route -n get default | grep gateway | awk '{print $2}'`
 }
 
 setIp() {
   getIp
   getIface
-  echo -n "Enter IP address ($ifaceIp, right? Press enter) > "
-  read ipaddr
+  retval_setIp="-1"
   if [ -z $ipaddr ]
   then
     ipaddr=$ifaceIp
   fi
 
-  echo -n "Enter netmask (255.255.255.0, right? Press enter) > "
-  read netmask
   if [ -z $netmask ]
   then
     netmask="255.255.255.0"
   fi
 
-  echo -n "Enter GATEWAY address ($gwIp, right? Press enter) > "
-  read gwaddr
   if [ -z $gwaddr ]
   then
     gwaddr=$gwIp
   fi
 
-  echo ""
-  echo "Current settings:"
-  echo "IP addr  : $ipaddr"
-  echo "Netmask  : $netmask"
-  echo "Gateway  : $gwaddr"
-  echo "Interface: $iFace"
-  echo ""
+  exec 3>&1
+  VALUES=$(dialog --title "Network configuration" --form "Settings" 0 0 0 \
+    "IP address"    1 0 "$ipaddr"         1 12 30 0 \
+    "Netmask   "    2 0 "$netmask"        2 12 30 0 \
+    "Gateway   "    3 0 "$gwaddr"         3 12 30 0 \
+    2>&1 1>&3)
+    retval_set=$?
+  case $retval_set in
+  0)
+    dialog --yesno "Are all the settings correct?\n\nIP addr: $ipaddr\nNetmask: $netmask\nGateway: $gwaddr\n\n" 0 0
+    retval_setIp=$?
+    case $retval_setIp in
+      0)
+        return 0
+      ;;
+      1)
+        return 1
+      ;;
+      255)
+        echo ""
+        return 2
+      ;;
+    esac
+    ;;
+  1)
+    echo "Abort installation (cancel)"
+    return 1
+    ;;
+  255)
+    echo "Abort installation (esc)"
+    return 2
+    ;;
+  esac
 }
-
 
 destroyDisk() {
   rc=`gpart destroy -F /dev/$disk`
@@ -212,15 +226,15 @@ modConfig() {
   echo "host  all  all  $ipaddr/32  trust" >>/tmp/zroot/var/db/pgsql/data/pg_hba.conf
   echo "first" >/tmp/zroot/first
 
-  echo "#/bin/sh" >/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
-  echo "" >> /tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
-  echo "if [ -e /first ];" >>/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
-  echo "then" >>/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
-  echo "  /usr/local/bin/psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '$ipaddr' WHERE i_environment = 1;\"" >>/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
-  echo "  rm /first" >>/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
-  echo "fi" >>/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
+  echo "#/bin/sh" >/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
+  echo "" >> /tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
+  echo "if [ -e /first ];" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
+  echo "then" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
+  echo "  /usr/local/bin/psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '$ipaddr' WHERE i_environment = 1;\"" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
+  echo "  rm /first" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
+  echo "fi" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
 
-  chmod +x /tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
+  chmod +x /tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
 }
 
 finish() {
@@ -228,14 +242,24 @@ finish() {
 }
 
 start
+if [ $? -ne 0 ]
+  then
+    exit $?
+  fi
+
 setIp
-getDisk
-destroyDisk
-createParts
-createZFSparts
-downloadImages
-importFs
-modConfig
-finish
+while [ $retval_setIp -ne 0 ]
+  do
+    setIp
+  done
+
+#getDisk
+#destroyDisk
+#createParts
+#createZFSparts
+#downloadImages
+#importFs
+#modConfig
+#finish
 
 # UPDATE environments SET assigned_ips = '10.99.0.2' WHERE i_environment = 1;
