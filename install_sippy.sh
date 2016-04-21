@@ -253,6 +253,7 @@ echo $retval_set
 
 while [ $retval_setIp -ne 0 ]
   do
+    dialog --yesno "$retval_set" 0 0
     if [ $retval_set -eq 1 ]
       then
         exit 1
