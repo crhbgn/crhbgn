@@ -107,6 +107,7 @@ setIp() {
 }
 
 destroyDisk() {
+  dialog --infobox "Destroying disk $disk"
   rc=`gpart destroy -F /dev/$disk`
   if [ $? -ne "0" ]
   then
@@ -120,6 +121,7 @@ getDisk() {
 }
 
 createParts() {
+  dialog --infobox "Creating new partitions on $disk"
   rc=`gpart create -s gpt /dev/$disk`
   if [ $? -ne "0" ]
   then
@@ -161,6 +163,7 @@ createZFSparts() {
 }
 
 downloadImages() {
+  dialog --infobox "Downloading images"
   zfs mount -a
   # scp besco@10.101.0.16:./mnt/zfs-images/new/\*.gz /tmp/zroot/tmp
   scp besco@10.101.0.16:./mnt/zfs-images/\*.gz /tmp/zroot/tmp
@@ -168,26 +171,26 @@ downloadImages() {
 };
 
 importFs() {
-  echo "Restoring /root partition"
+  dialog --infobox "Restoring /root partition"
   gunzip -c -d /tmp/zroot/tmp/root.gz | zfs receive zroot/root
   rm /tmp/zroot/tmp/root.gz
-  echo "Restoring /storage partition"
+  dialog --infobox "Restoring /storage partition"
   gunzip -c -d /tmp/zroot/tmp/storage.gz | zfs receive zroot/storage
   rm /tmp/zroot/tmp/storage.gz
-  echo "Restoring /usr partition"
+  dialog --infobox "Restoring /usr partition"
   gunzip -c -d /tmp/zroot/tmp/usr.gz | zfs receive zroot/usr
   rm /tmp/zroot/tmp/usr.gz
-  echo "Restoring /usr/home partition"
+  dialog --infobox "Restoring /usr/home partition"
   gunzip -c -d /tmp/zroot/tmp/usr-home.gz | zfs receive zroot/usr/home
   rm /tmp/zroot/tmp/usr-home.gz
 
-  echo "Restoring /var partition"
+  dialog --infobox "Restoring /var partition"
   gunzip -c -d /tmp/zroot/tmp/var.gz | zfs receive zroot/var
   rm /tmp/zroot/tmp/var.gz
-  echo "Restoring /var/log partition"
+  dialog --infobox "Restoring /var/log partition"
   gunzip -c -d /tmp/zroot/tmp/var-log.gz | zfs receive zroot/var/log
   rm /tmp/zroot/tmp/var-log.gz
-  echo "Restoring /var/tmp partition"
+  dialog --infobox "Restoring /var/tmp partition"
   gunzip -c -d /tmp/zroot/tmp/var-tmp.gz | zfs receive zroot/var/tmp
   rm /tmp/zroot/tmp/var-tmp.gz
 
@@ -208,6 +211,7 @@ importFs() {
 }
 
 modConfig() {
+  dialog --infobox "Configuring system"
   cat /tmp/zroot/boot/loader.conf | sed 's/rootfs/zroot\/root/g' >/tmp/loader.conf
   cp /tmp/zroot/boot/loader.conf /tmp/zroot/boot/loader.conf-bk
   cp /tmp/loader.conf /tmp/zroot/boot/loader.conf
@@ -234,13 +238,14 @@ modConfig() {
   echo "then" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
   echo "  /usr/local/bin/psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '$ipaddr' WHERE i_environment = 1;\"" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
   echo "  rm /first" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
+  echo "  sleep 4" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
   echo "fi" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
 
   chmod +x /tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
 }
 
 finish() {
-  #zfs umount -a
+  zfs umount -a
 }
 
 start
@@ -261,13 +266,15 @@ while [ $retval_setIp -ne 0 ]
     setIp
   done
 echo $retval_setIp
-#getDisk
-#destroyDisk
-#createParts
-#createZFSparts
-#downloadImages
-#importFs
-#modConfig
-#finish
-
-# UPDATE environments SET assigned_ips = '10.99.0.2' WHERE i_environment = 1;
+getDisk
+destroyDisk
+createParts
+createZFSparts
+downloadImages
+importFs
+modConfig
+finish
+$DIALOG --clear --defaultno --yesno "Installation complete.\nDo you want reboot now?" 8 50
+if [ $? -eq 0 ] then
+  reboot
+fi
