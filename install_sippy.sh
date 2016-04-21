@@ -71,7 +71,7 @@ setIp() {
   fi
 
   exec 3>&1
-  VALUES=$(dialog --clear --title "Network configuration" --form "Settings\nCurrent interface $iFace" 0 0 0 \
+  VALUES=$(dialog --clear --title "Network configuration" --form "Settings\nCurrent interface: $iFace" 0 0 0 \
     "IP address"    1 0 "$ipaddr"         1 12 30 0 \
     "Netmask   "    2 0 "$netmask"        2 12 30 0 \
     "Gateway   "    3 0 "$gwaddr"         3 12 30 0 \
@@ -254,11 +254,11 @@ if [ $retval_set -eq 1 ]
     exit 1
   fi
 
-#while [ $retval_setIp -ne 0 ]
-#  do
-#    setIp
-#  done
-
+while [ $retval_setIp -ne 0 ]
+  do
+    setIp
+  done
+echo $retval_setIp
 #getDisk
 #destroyDisk
 #createParts
