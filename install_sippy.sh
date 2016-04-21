@@ -210,15 +210,15 @@ modConfig() {
   echo "host  all  all  $ipaddr/32  trust" >>/tmp/zroot/var/db/pgsql/data/pg_hba.conf
   echo "first" >/tmp/zroot/first
 
-  echo "#/bin/sh" >/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
-  echo "" >> /tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
-  echo "if [ -e /first ];" >>/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
-  echo "then" >>/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
-  echo "  /usr/local/bin/psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '$ipaddr' WHERE i_environment = 1;\"" >>/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
-  echo "  rm /first" >>/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
-  echo "fi" >>/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
+  echo "#/bin/sh" >/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
+  echo "" >> /tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
+  echo "if [ -e /first ];" >>/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
+  echo "then" >>/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
+  echo "  /usr/local/bin/psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '$ipaddr' WHERE i_environment = 1;\"" >>/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
+  echo "  rm /first" >>/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
+  echo "fi" >>/tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
 
-  chmod +x /tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
+  chmod +x /tmp/zroot/usr/local/etc/rc.d/sip_0_change_ip.sh
 }
 
 finish() {
