@@ -250,15 +250,14 @@ if [ $? -ne 0 ]
 
 setIp
 echo $retval_set
-read
-if [ $retval_set -eq 1 ]
-  then
-    exit 1
-  fi
 
 while [ $retval_setIp -ne 0 ]
   do
     setIp
+    if [ $retval_set -eq 1 ]
+      then
+        exit 1
+      fi
   done
 echo $retval_setIp
 #getDisk
