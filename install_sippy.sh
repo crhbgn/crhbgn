@@ -42,7 +42,7 @@ getIface() {
     echo "Abort installation";;
   esac
 
-  echo $iFace
+  # echo $iFace
 }
 
 getIp() {
@@ -52,7 +52,8 @@ getIp() {
 
 setIp() {
   getIface
-  #getIp
+
+  getIp
   retval_setIp="-1"
   if [ -z $ipaddr ]
   then
@@ -70,7 +71,7 @@ setIp() {
   fi
 
   exec 3>&1
-  VALUES=$(dialog --clear --title "Network configuration" --form "Settings" 0 0 0 \
+  VALUES=$(dialog --clear --title "Network configuration" --form "Settings\nCurrent interface $iFace" 0 0 0 \
     "IP address"    1 0 "$ipaddr"         1 12 30 0 \
     "Netmask   "    2 0 "$netmask"        2 12 30 0 \
     "Gateway   "    3 0 "$gwaddr"         3 12 30 0 \
@@ -248,6 +249,11 @@ if [ $? -ne 0 ]
   fi
 
 setIp
+if [ $retval_set -eq 1 ]
+  then
+    exit 1
+  fi
+
 while [ $retval_setIp -ne 0 ]
   do
     setIp
