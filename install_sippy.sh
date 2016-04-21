@@ -145,7 +145,7 @@ createZFSparts() {
 }
 
 downloadImages() {
-
+  zfs mount -a
   # scp besco@10.101.0.16:./mnt/zfs-images/new/\*.gz /tmp/zroot/tmp
   scp besco@10.101.0.16:./mnt/zfs-images/\*.gz /tmp/zroot/tmp
 
@@ -221,8 +221,7 @@ finish() {
   zfs umount -a
 }
 
-#start
-
+start
 setIp
 getDisk
 destroyDisk
