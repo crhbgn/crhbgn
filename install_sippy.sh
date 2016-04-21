@@ -24,13 +24,14 @@ start() {
 
 getIface() {
   p=1
+  network=""
   trap "rm -f $tempfile" 0 1 2 5 15
   for i in `ifconfig | grep flag | grep -v lo0 | awk '{print \$1}' | sed 's/://g' | xargs`; do
     eval val$p=$i
     network="$network $i <--- off"
     p=`expr $p + 1`
   done
-  $DIALOG --clear --no-cancel --title "Network configuration" --clear --radiolist --clear "Select network card" 0 50 10 $network 2>$tempfile
+  $DIALOG --no-cancel --title "Network configuration" --clear --radiolist --clear "Select network card" 0 50 10 $network 2>$tempfile
   retval=$?
   choice=`cat $tempfile`
   case $retval in
