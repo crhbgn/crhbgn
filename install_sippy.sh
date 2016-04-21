@@ -177,6 +177,8 @@ importFs() {
 
   zpool set bootfs="zroot/root" zroot
   # zfs umount -a
+  zfs umount zroot/tmp
+  zfs destroy zroot/tmp
   zfs set mountpoint=none zroot
   zfs set mountpoint=/ zroot/root
   zfs set mountpoint=/storage zroot/storage
