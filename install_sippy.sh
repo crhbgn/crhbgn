@@ -55,7 +55,6 @@ setIp() {
   getIface
   getIp
   retval_setIp="-1"
-  $DIALOG --defaultno --yesno "$ipaddr\n$netmask\n$gwaddr" 0 0
 
   if [ -z $ipaddr ]
   then
