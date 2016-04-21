@@ -176,8 +176,17 @@ importFs() {
   rm /tmp/zroot/tmp/var-tmp.gz
 
   zpool set bootfs="zroot/root" zroot
-  zfs set mountpoint=/ zroot
-  zfs mount zroot/root
+  zfs umount -a
+  zfs set mountpoint=none zroot
+  zfs set mountpoint=/ zroot/root
+  zfs set mountpoint=/storage zroot/storage
+  zfs set mountpoint=/usr zroot/usr
+  zfs set mountpoint=/usr/home zroot/usr/home
+  zfs set mountpoint=/var zroot/var
+  zfs set mountpoint=/var/log zroot/var/log
+  zfs set mountpoint=/var/tmp zroot/var/tmp
+  zfs mount -a
+  chmod 777 /tmp/zroot/tmp
 }
 
 modConfig() {
@@ -194,14 +203,21 @@ modConfig() {
   cp /tmp/rc.conf /tmp/zroot/root/etc/rc.conf
   cat /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/usr/local/etc/rc.d/sip-$ipaddr.sh
   cat /tmp/zroot/root/etc/hosts | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/root/etc/hosts.new
+  echo "first" >/tmp/zroot/first
   echo "host  all  all  $ipaddr/32  trust" >>/tmp/zroot/var/db/pgsql/data/pg_hba.conf
-  chmod 777 /tmp/zroot/tmp
+  echo "first" >/tmp/zroot/first
+
+  echo "#/bin/sh" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "" > /tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "if [ -e /first ];" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "then" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "  psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '10.99.0.2' WHERE i_environment = 1;\"" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "  rm /first" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "fi" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
 }
 
 finish() {
   zfs umount -a
-  # zfs set mountpoint=/ zroot
-  # zfs set mountpoint=/ zroot/root
 }
 
 #start
@@ -214,7 +230,6 @@ createZFSparts
 downloadImages
 importFs
 modConfig
-modConfig_p
 finish
 
 # UPDATE environments SET assigned_ips = '10.99.0.2' WHERE i_environment = 1;
