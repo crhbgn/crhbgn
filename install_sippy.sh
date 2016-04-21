@@ -253,11 +253,11 @@ echo $retval_set
 
 while [ $retval_setIp -ne 0 ]
   do
-    setIp
     if [ $retval_set -eq 1 ]
       then
         exit 1
       fi
+    setIp
   done
 echo $retval_setIp
 #getDisk
