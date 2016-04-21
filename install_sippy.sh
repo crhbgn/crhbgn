@@ -6,7 +6,7 @@ tempfile=`mktemp 2>/dev/null` || tempfile=/tmp/test$$
 start() {
   #echo -n "The script destroys all data on hard disk. Are you sure you want to start? (Yes/No):"
   #read yesno
-  $DIALOG --defaultno --yesno "The script destroys all data on hard disk. \n\nAre you sure you want to start?" 8 50
+  $DIALOG --clear --defaultno --yesno "The script destroys all data on hard disk. \n\nAre you sure you want to start?" 8 50
   case $? in
     0)
       echo "Start installation"
@@ -70,7 +70,7 @@ setIp() {
   fi
 
   exec 3>&1
-  VALUES=$(dialog --title "Network configuration" --form "Settings" 0 0 0 \
+  VALUES=$(dialog --clear --title "Network configuration" --form "Settings" 0 0 0 \
     "IP address"    1 0 "$ipaddr"         1 12 30 0 \
     "Netmask   "    2 0 "$netmask"        2 12 30 0 \
     "Gateway   "    3 0 "$gwaddr"         3 12 30 0 \
