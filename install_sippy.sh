@@ -56,6 +56,7 @@ setIp() {
 
   getIp
   retval_setIp="-1"
+  $DIALOG --clear --defaultno --yesno "$ipaddr\n$netmask\n$gwaddr" 0 0
   if [ -z $ipaddr ]
   then
     ipaddr=$ifaceIp
