@@ -254,10 +254,10 @@ if [ $retval_set -eq 1 ]
     exit 1
   fi
 
-while [ $retval_setIp -ne 0 ]
-  do
-    setIp
-  done
+#while [ $retval_setIp -ne 0 ]
+#  do
+#    setIp
+#  done
 
 #getDisk
 #destroyDisk
