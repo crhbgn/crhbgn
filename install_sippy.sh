@@ -100,7 +100,7 @@ setIp() {
     ;;
   255)
     echo "Abort installation (esc)"
-    return 2
+    return 1
     ;;
   esac
 }
@@ -249,6 +249,8 @@ if [ $? -ne 0 ]
   fi
 
 setIp
+echo $retval_set
+read
 if [ $retval_set -eq 1 ]
   then
     exit 1
