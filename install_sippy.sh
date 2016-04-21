@@ -285,6 +285,7 @@ importFs
 modConfig
 finish
 $DIALOG --clear --defaultno --yesno "Installation complete.\nDo you want reboot now?" 8 50
-if [ $? -eq 0 ] then
-  reboot
-fi
+if [ $? -eq 0 ]
+  then
+    reboot
+  fi
