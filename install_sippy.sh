@@ -203,18 +203,22 @@ modConfig() {
   cp /tmp/rc.conf /tmp/zroot/etc/rc.conf
   cat /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/usr/local/etc/rc.d/sip-$ipaddr.sh
   cat /tmp/zroot/etc/hosts | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/etc/hosts.new
-  echo "first" >/tmp/zroot/first
+  cat /tmp/zroot/usr/local/etc/apache24/httpd-0.conf | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/usr/local/etc/apache24/httpd-0.conf-new
+  mv /tmp/zroot/usr/local/etc/apache24/httpd-0.conf-new /tmp/zroot/usr/local/etc/apache24/httpd-0.conf
+  chmod +x /tmp/zroot/usr/local/etc/rc.d/sip-$ipaddr.sh
+  rm /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh
   echo "host  all  all  $ipaddr/32  trust" >>/tmp/zroot/var/db/pgsql/data/pg_hba.conf
   echo "first" >/tmp/zroot/first
 
-  echo "#/bin/sh" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "" >> /tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "if [ -e /first ];" >>/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "then" >>/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "  psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '$ipaddr' WHERE i_environment = 1;\"" >>/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "  rm /first" >>/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "fi" >>/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  chmod +x /tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "#/bin/sh" >/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
+  echo "" >> /tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
+  echo "if [ -e /first ];" >>/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
+  echo "then" >>/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
+  echo "  /usr/local/bin/psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '$ipaddr' WHERE i_environment = 1;\"" >>/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
+  echo "  rm /first" >>/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
+  echo "fi" >>/tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
+
+  chmod +x /tmp/zroot/usr/local/etc/rc.d/sip_change_ip.sh
 }
 
 finish() {
