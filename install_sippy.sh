@@ -30,7 +30,7 @@ getIface() {
     network="$network $i <--- off"
     p=`expr $p + 1`
   done
-  $DIALOG --no-cancel --title "Network configuration" --clear --radiolist "Select network card" 0 50 10 $network 2>$tempfile
+  $DIALOG --no-cancel --title "Network configuration" --clear --radiolist --clear "Select network card" 0 50 10 $network 2>$tempfile
   retval=$?
   choice=`cat $tempfile`
   case $retval in
