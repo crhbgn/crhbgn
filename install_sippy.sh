@@ -214,6 +214,7 @@ modConfig() {
   echo "  psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '10.99.0.2' WHERE i_environment = 1;\"" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
   echo "  rm /first" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
   echo "fi" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  chmod +x /tmp/zroot/usr/local/etc/rc.d/change_ip.sh
 }
 
 finish() {
