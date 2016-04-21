@@ -190,9 +190,9 @@ importFs() {
 }
 
 modConfig() {
-  cat /tmp/zroot/root/boot/loader.conf | sed 's/rootfs/zroot/g' >/tmp/loader.conf
-  cp /tmp/zroot/root/boot/loader.conf /tmp/zroot/root/boot/loader.conf-bk
-  cp /tmp/loader.conf /tmp/zroot/root/boot/loader.conf
+  cat /tmp/zroot/boot/loader.conf | sed 's/rootfs/zroot\/root/g' >/tmp/loader.conf
+  cp /tmp/zroot/boot/loader.conf /tmp/zroot/root/boot/loader.conf-bk
+  cp /tmp/loader.conf /tmp/zroot/boot/loader.conf
 
   cat /tmp/zroot/root/etc/rc.conf | sed 's/^ifconfig/#ifconfig/g' >/tmp/rc.conf
   echo "ifconfig_$iFace=\"inet $ipaddr netmask $netmask\"" >>/tmp/rc.conf
@@ -208,12 +208,12 @@ modConfig() {
   echo "first" >/tmp/zroot/first
 
   echo "#/bin/sh" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "" > /tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "if [ -e /first ];" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "then" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "  psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '10.99.0.2' WHERE i_environment = 1;\"" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "  rm /first" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
-  echo "fi" >/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "" >> /tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "if [ -e /first ];" >>/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "then" >>/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "  psql -U pgsql -d sippy -c \"UPDATE environments SET assigned_ips = '10.99.0.2' WHERE i_environment = 1;\"" >>/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "  rm /first" >>/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
+  echo "fi" >>/tmp/zroot/usr/local/etc/rc.d/change_ip.sh
   chmod +x /tmp/zroot/usr/local/etc/rc.d/change_ip.sh
 }
 
