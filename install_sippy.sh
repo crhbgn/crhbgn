@@ -176,7 +176,7 @@ importFs() {
   rm /tmp/zroot/tmp/var-tmp.gz
 
   zpool set bootfs="zroot/root" zroot
-  zfs umount -a
+  # zfs umount -a
   zfs set mountpoint=none zroot
   zfs set mountpoint=/ zroot/root
   zfs set mountpoint=/storage zroot/storage
@@ -218,7 +218,7 @@ modConfig() {
 }
 
 finish() {
-  zfs umount -a
+  #zfs umount -a
 }
 
 start
