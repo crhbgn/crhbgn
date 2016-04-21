@@ -51,8 +51,8 @@ getIp() {
 }
 
 setIp() {
-  getIp
-  getIface
+  #getIp
+  #getIface
   retval_setIp="-1"
   if [ -z $ipaddr ]
   then
