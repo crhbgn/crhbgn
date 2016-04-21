@@ -79,6 +79,16 @@ setIp() {
     "Gateway   "    3 0 "$gwaddr"         3 12 30 0 \
     2>&1 1>&3)
     retval_set=$?
+  p=1
+  for param in `echo $VALUES|tr " " "\n"`
+  do
+    eval val$p=$param
+    p=`expr $p + 1`
+  done
+  ipaddr=$val1
+  netmask=$val2
+  gwaddr=$val3
+
   case $retval_set in
   0)
     dialog --yesno "Are all the settings correct?\n\nIP addr: $ipaddr\nNetmask: $netmask\nGateway: $gwaddr\n\n" 0 0
