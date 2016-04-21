@@ -191,18 +191,18 @@ importFs() {
 
 modConfig() {
   cat /tmp/zroot/boot/loader.conf | sed 's/rootfs/zroot\/root/g' >/tmp/loader.conf
-  cp /tmp/zroot/boot/loader.conf /tmp/zroot/root/boot/loader.conf-bk
+  cp /tmp/zroot/boot/loader.conf /tmp/zroot/boot/loader.conf-bk
   cp /tmp/loader.conf /tmp/zroot/boot/loader.conf
 
-  cat /tmp/zroot/root/etc/rc.conf | sed 's/^ifconfig/#ifconfig/g' >/tmp/rc.conf
+  cat /tmp/zroot/etc/rc.conf | sed 's/^ifconfig/#ifconfig/g' >/tmp/rc.conf
   echo "ifconfig_$iFace=\"inet $ipaddr netmask $netmask\"" >>/tmp/rc.conf
   echo "defaultrouter=\"$gwaddr\"" >>/tmp/rc.conf
   echo "" >>/tmp/rc.conf
   # mv sip-46.166.172.5.sh | sed 's/46.166.172.5/10.99.0.2/g'
-  cp /tmp/zroot/root/etc/rc.conf /tmp/zroot/root/etc/rc.conf-bk
-  cp /tmp/rc.conf /tmp/zroot/root/etc/rc.conf
+  cp /tmp/zroot/etc/rc.conf /tmp/zroot/etc/rc.conf-bk
+  cp /tmp/rc.conf /tmp/zroot/etc/rc.conf
   cat /tmp/zroot/usr/local/etc/rc.d/sip-46.166.172.5.sh | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/usr/local/etc/rc.d/sip-$ipaddr.sh
-  cat /tmp/zroot/root/etc/hosts | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/root/etc/hosts.new
+  cat /tmp/zroot/etc/hosts | sed 's/46.166.172.5/'$ipaddr'/g' >/tmp/zroot/etc/hosts.new
   echo "first" >/tmp/zroot/first
   echo "host  all  all  $ipaddr/32  trust" >>/tmp/zroot/var/db/pgsql/data/pg_hba.conf
   echo "first" >/tmp/zroot/first
