@@ -30,7 +30,7 @@ getIface() {
     network="$network $i <--- off"
     p=`expr $p + 1`
   done
-  $DIALOG --no-cancel --title "Network configuration" --clear --radiolist --clear "Select network card" 0 50 10 $network 2>$tempfile
+  $DIALOG --clear --no-cancel --title "Network configuration" --clear --radiolist --clear "Select network card" 0 50 10 $network 2>$tempfile
   retval=$?
   choice=`cat $tempfile`
   case $retval in
@@ -253,7 +253,6 @@ echo $retval_set
 
 while [ $retval_setIp -ne 0 ]
   do
-    dialog --yesno "$retval_set" 0 0
     if [ $retval_set -eq 1 ]
       then
         exit 1
