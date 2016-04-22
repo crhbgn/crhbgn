@@ -117,7 +117,7 @@ setIp() {
 }
 
 destroyDisk() {
-  dialog --infobox "Destroying disk $disk" 0 0
+  dialog --infobox "Destroying disk $disk" 3 40
   rc=`gpart destroy -F /dev/$disk`
   if [ $? -ne "0" ]
   then
@@ -131,7 +131,7 @@ getDisk() {
 }
 
 createParts() {
-  dialog --infobox "Creating new partitions on $disk" 0 0
+  dialog --infobox "Creating new partitions on $disk" 3 40
   rc=`gpart create -s gpt /dev/$disk`
   if [ $? -ne "0" ]
   then
@@ -173,7 +173,7 @@ createZFSparts() {
 }
 
 downloadImages() {
-  dialog --infobox "Downloading images" 0 0
+  dialog --infobox "Downloading images" 3 40
   zfs mount -a
   # scp besco@10.101.0.16:./mnt/zfs-images/new/\*.gz /tmp/zroot/tmp
   scp besco@10.101.0.16:./mnt/zfs-images/\*.gz /tmp/zroot/tmp
@@ -181,26 +181,26 @@ downloadImages() {
 };
 
 importFs() {
-  dialog --infobox "Restoring /root partition" 0 0
+  dialog --infobox "Restoring /root partition" 3 40
   gunzip -c -d /tmp/zroot/tmp/root.gz | zfs receive zroot/root
   rm /tmp/zroot/tmp/root.gz
-  dialog --infobox "Restoring /storage partition" 0 0
+  dialog --infobox "Restoring /storage partition" 3 40
   gunzip -c -d /tmp/zroot/tmp/storage.gz | zfs receive zroot/storage
   rm /tmp/zroot/tmp/storage.gz
-  dialog --infobox "Restoring /usr partition" 0 0
+  dialog --infobox "Restoring /usr partition" 3 40
   gunzip -c -d /tmp/zroot/tmp/usr.gz | zfs receive zroot/usr
   rm /tmp/zroot/tmp/usr.gz
-  dialog --infobox "Restoring /usr/home partition" 0 0
+  dialog --infobox "Restoring /usr/home partition" 3 40
   gunzip -c -d /tmp/zroot/tmp/usr-home.gz | zfs receive zroot/usr/home
   rm /tmp/zroot/tmp/usr-home.gz
 
-  dialog --infobox "Restoring /var partition" 0 0
+  dialog --infobox "Restoring /var partition" 3 40
   gunzip -c -d /tmp/zroot/tmp/var.gz | zfs receive zroot/var
   rm /tmp/zroot/tmp/var.gz
-  dialog --infobox "Restoring /var/log partition" 0 0
+  dialog --infobox "Restoring /var/log partition" 3 40
   gunzip -c -d /tmp/zroot/tmp/var-log.gz | zfs receive zroot/var/log
   rm /tmp/zroot/tmp/var-log.gz
-  dialog --infobox "Restoring /var/tmp partition" 0 0
+  dialog --infobox "Restoring /var/tmp partition" 3 40
   gunzip -c -d /tmp/zroot/tmp/var-tmp.gz | zfs receive zroot/var/tmp
   rm /tmp/zroot/tmp/var-tmp.gz
 
@@ -221,7 +221,7 @@ importFs() {
 }
 
 modConfig() {
-  dialog --infobox "Configuring system" 0 0
+  dialog --infobox "Configuring system" 3 40
   cat /tmp/zroot/boot/loader.conf | sed 's/rootfs/zroot\/root/g' >/tmp/loader.conf
   cp /tmp/zroot/boot/loader.conf /tmp/zroot/boot/loader.conf-bk
   cp /tmp/loader.conf /tmp/zroot/boot/loader.conf
