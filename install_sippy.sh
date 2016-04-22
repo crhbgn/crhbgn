@@ -250,8 +250,10 @@ modConfig() {
   echo "  rm /first" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
   echo "  sleep 4" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
   echo "fi" >>/tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
-
   chmod +x /tmp/zroot/usr/local/etc/rc.d/sip-0-change_ip.sh
+  echo >/tmp/zroot/var/log/postgresql.log
+  echo >/tmp/zroot/var/log/irvd.log
+  echo >/tmp/zroot/var/log/mpd.log
 }
 
 finish() {
